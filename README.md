@@ -432,5 +432,134 @@ systemctl restart haproxy
 
 ## 2 安装Helix Dashboard
 
+### 2.1 执行Helix Deployment Manager
+* 在helix-svc服务器上执行Helix ITOM安装程序
+
+```
+cd /root//root/helix-on-prem-deployment-manager-25.1
+./deployment-manager.sh
+```
+
+* 等待安装程序执行完成：
+
+![0b6482feaff0c8c0577d88670c5a260e.png](en-resource://database/709:0)
+
+### 2.2 CA证书导入
+
+* 查看Helix Portal帐户激活邮件
+
+![e2a2e48fca0ef712078e8872c43dee8e.png](en-resource://database/711:0)
+
+* 点击邮件中“Sign in to activate your account”链接，弹出浏览器登录Helix Portal页面，报错“net::ERR_CERT_AUTHORITY_INVALID”，这是正常。因为Helix使用的Https签名CA是自定义的，需要将CA证书导入信任Store.
+![0fd9f52381c9a891a3df932a56338798.png](en-resource://database/713:0)
+
+* helix-svc主机上/root/openssl/HelixCA.crt文件拷贝到当前Windows主机，并鼠标双击
+![2209d4889b8ad5ebf53e8fc1f80fa9bb.png](en-resource://database/715:0)
+
+* 进入证书导入向导，选择本地本地机器
+![bd51f9c8a111c2a56f0dd59d10b79985.png](en-resource://database/717:0)
+* 选择可信的根证书认证
+![f12fc173d25a9d01ed54d65f3ca4de44.png](en-resource://database/719:0)
+
+* 再次刷新浏览器登录界面，设置缺省管理员账户hannah_admin的密码
+![840eba727e3cac46f000a9e2d141b528.png](en-resource://database/721:0)
+
+* 完成Helix Portal的安装
+![9439743c1c0b70671fe57d773eb9f084.png](en-resource://database/723:0)
+
 ## 3 安装Helix Discovery
+BMC Helix Discovery是Helix ITOM的基础组件，必须先成功安装配置Helix Discovery之后，才能其他Helix ITOM组件。Helix Discovery是以虚拟机OVF文件方式交付，以VM形式运行。
+
+### 3.1 虚拟机导入和配置
+
+* 在虚拟机控制台，创建虚拟机，选择从OVF或OVA文件方式创建
+
+![287f70243149207549f405f3adff6fcf.png](en-resource://database/725:0)
+
+* 定义主机名，选择OVF文件，完成导入过程
+
+![1f042036a7d12eef48537057b21af1f6.png](en-resource://database/727:0)
+
+* 登录helix-discovery服务器，使用内置用户tideway/tidewayuser，修改密码bmcAdm1n%
+
+![89fc3d307726efd596af69cbe3f581f3.png](en-resource://database/729:0)
+
+* 转换到root用户，缺省密码tideway，首次登陆时，需要更改密码为bmcAdm1n$
+![d80db88a56ef7231e9bdb063da66a6be.png](en-resource://database/731:0)
+
+* 设置时区
+```
+#set timezone
+timedatectl set-timezone Asia/Shanghai 
+
+#check result
+timedatectl
+```
+
+* 转换到netadmin用户，进入网络管理Shell
+![db03ca14cbfb97713592ab62599915c8.png](en-resource://database/733:0)
+
+* 先选择G选项，再选择H选项，配置主机名为helix-discovery，C选项提交，Q选项退回主菜单
+
+![03316abad339442a74efdd31d1f204d6.png](en-resource://database/735:0)
+
+
+* 选择I选项，1选项，重新配置网卡，设置：
+DHCP: n
+ IPv4 Address: 192.168.1.210
+ Netmask: 255.255.255.0
+ IPv4 Gateway: 192.168.1.1
+ IPv6: n
+ Enable on boot: y
+选择选项C提交，y确认更改，再选择选项Q退回主菜单，最后选择选项R，重启虚拟机，完整虚拟机配置
+![2a0c452ae85d2f162c4c4b18c753e154.png](en-resource://database/737:0)
+
+### 3.2 Helix控制台配置
+使用浏览器登录Helix控制台https://192.168.1.210，使用内置登录用户名system，缺省密码system
+![88249e3bf942988c45a9af607b1c8eec.png](en-resource://database/739:0)
+
+* 首次登录，需要修改system用户密码，比如改为bmcAdm1n#
+
+![c348ea1151f8cd83e973e788690f8ee1.png](en-resource://database/741:0)
+
+* 在测试环境为方便测试使用，建议修改安全策略，取消密码限制。Administration菜单，-> Security Policy试图
+Check out below options:
+Must contain uppercase characters
+Must contain lowercase characters
+Must contain numeric characters
+Must contain special characters
+Must not contain sequences
+Must not match a common dictionary password
+
+![3186c53f04369808961f050a7e2ee29e.png](en-resource://database/743:0)
+
+* 为了方便记忆，将密码改为bmcAdm1n，与secrets.txt中的SMART_SYSTEM_PASSWORD值一致
+
+![dd95bcf060397efece2925a5b7daf3b6.png](en-resource://database/745:0)
+
+* 进入菜单Administration->Appliance Configuration->Name Resolution视图设置DNS
+Search Domain: bmc.local
+Name Servers: 192.168.1.1
+
+![ea956a35a93df842d4506147dd141b1e.png](en-resource://database/747:0)
+
+* 进入菜单Administration->Time Sync视图NTP
+![46350ea2439fb8d73f8a0906a932a373.png](en-resource://database/749:0)
+
+* 上传Helix CA证书作为可信证书
+Administration-> Single Sign On视图，Upload CA Bundle
+![66e945683501bb7ba5b7424410435f0b.png](en-resource://database/751:0)
+
+
 ## 4 安装其他ITOM组件
+Helix ITOM组件包括如下列表，选择安装哪个组件，在deployment.config文件中将对应的参数值改为yes，并重新执行/deployment-manager.sh即可
+
+| 行号 | 参数名 | 组件名 |
+| --- | --- | --- |
+| 42 | AIOPS_SERVICES | Helix Service Monitoring |
+| 45 | MONITOR | Helix Operations Management |
+| 48 | LOG_ANALYTICS_SERVICES | Helix Log Analytics |
+| 51 | INTELLIGENT_AUTOMATION | Helix Intelligent Automation |
+| 54 | OPTIMIZE | Helix Continuous Optimization |
+| 62 | AUTOANAMOLY | Helix Operations Management & Helix Service Monitoring |
+
