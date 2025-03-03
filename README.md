@@ -1,41 +1,41 @@
-# BMC HelixOM ITOM & ITSM OnPrem Installation Step by Step 2 - ITOM安装
+# BMC HelixOM ITOM & ITSM OnPrem Installation Step by Step 2 - ITOM
 
-## 1 安装环境准备
-### 1.1 Helix Deployment Manager下载
-Helix ITOM安装过程由helix deployment manager完成。
+## 1 Pre-installation preparation
+### 1.1 Download Helix Deployment Manager
+The Helix ITOM installation process is completed by helix deployment manager.
 
-* 登录[EPD](https://webepd.bmc.com/edownloads/ddl/cv/LP/442432/537020?fltk_=VTH1iwPCxfU%3D)，下载最新版本的helix-on-prem-deployment-manager-<release_version>.sh文件，例如helix-on-prem-deployment-manager-25.1.00-45.sh
+* Login to [EPD](https://webepd.bmc.com/edownloads/ddl/cv/LP/442432/537020?fltk_=VTH1iwPCxfU%3D)，Download the latest versionhelix-on-prem-deployment-manager-<release_version>.sh file，eg. helix-on-prem-deployment-manager-25.1.00-45.sh
 
 ![a3dfaebecc8a821b8ad7196eb517b21a.png](en-resource://database/683:1)
 
-* 上传helix-on-prem-deployment-manager-25.1.00-45.sh到helix-svc服务器
+* Upload helix-on-prem-deployment-manager-25.1.00-45.sh to the helix-svc server
 
-* 增加shell文件的可执行权限
+* Add executable permissions to shell files
 
 ```
 chmod a+x helix-on-prem-deployment-manager-25.1.00-45.sh
 ```
 
-* 执行解压缩，创建目录helix-on-prem-deployment-manager
+* Execute the self-extracting file and create the directory helix-on-prem-deployment-manager
 ```
 ./helix-on-prem-deployment-manager-25.1.00-45.sh
 ```
 
-* 修改目录名，方便版本区分
+* Modify the directory name to facilitate the distinction between versions
 ```
 mv helix-on-prem-deployment-manager helix-on-prem-deployment-manager-25.1
 ```
 
-### 1.2 配置文件设置
+### 1.2 Set the config files
 #### 1.2.1 infra.config
 
-* 编辑./config/infra.config文件，修改如下表所示的参数值：
+* Edit the ./config/infra.config file and modify the parameter values as shown in the following table:
 
-| 行号 | 参数 | 参数值 | 说明 |
+| Line No. | Parameter | Value | Description |
 | --- | --- | --- | --- |
 | 9 | IMAGE_REGISTRY_HOST | helix-harbor.bmc.local |  |
-| 10 | IMAGE_REGISTRY_USERNAME | admin | 密码在secrets文件中设置|
-| 20 | NAMESPACE | helixade | itom安装的命名空间 |
+| 10 | IMAGE_REGISTRY_USERNAME | admin | The password is set in the secrets file |
+| 20 | NAMESPACE | helixade | Namespace for itom installation |
 | 21 | LB_HOST | lb.bmc.local | |
 | 22 | LB_PORT | 443 | |
 | 23 | TMS_LB_HOST | tms.bmc.local | |
@@ -72,34 +72,34 @@ mv helix-on-prem-deployment-manager helix-on-prem-deployment-manager-25.1
 | 101 | AIOPS_STORAGE_CLASS | nfs-storage |  |
 | 105 | OPT_STORAGE_CLASS | nfs-storage |  |
 | 111 | CUSTOM_CA_SIGNED_CERT_IN_USE | true |  |
-| 126 | SMART_SYSTEM_USERNAME | system | Helix Discovery密码在secrets文件设置 |
+| 126 | SMART_SYSTEM_USERNAME | system | Helix Discovery password is set in the secrets file |
 | 130 | INGRESS_CLASS | nginx |  |
 | 135 | INGRESS_TLS_SECRET_NAME | my-tls-secret |  |
 | 140 | HELM_BIN | /usr/local/bin/helm |  |
 | 141 | KUBECTL_BIN | /usr/local/bin/kubectl |  |
-| 189 | LOGIN_ID | hannah_admin | Helix Dashboard登录用户 |
+| 189 | LOGIN_ID | hannah_admin | Helix Dashboard admin user |
 
 
 #### 1.2.2 deployment.config
-编辑./config/deployment.config配置文件，修改如下参数：
+Edit the ./config/deployment.config configuration file and modify the following parameters:
 
-| 行号 | 参数名 | 参数值 | 说明 |
+| Line No. | Parameter | Value | Description |
 | --- | --- | --- | --- |
-| 7 | DEPLOYMENT_SIZE | compact |  |
+| 7 | DEPLOYMENT_SIZE | compact | For PoC only |
 
 
 #### 1.2.3 secrets.txt
 
-* 编辑./common/certs/secrets.txt文件，修改如下内容：
+* Edit the ./common/certs/secrets.txt file and modify the following content:
 
-| 行号 | 参数名 | 参数值 | 说明 |
+| Line No. | Parameter | Value | Description |
 | --- | --- | --- | --- |
-| 2 | IMAGE_REGISTRY_PASSWORD | bmcAdm1n | Harbor的控制台登录密码 |
-| 3 | SMTP_PASSWORD | dummy | MailHog邮箱不需要密码 |
-| 4 | SMART_SYSTEM_PASSWORD | bmcAdm1n |  |
+| 2 | IMAGE_REGISTRY_PASSWORD | bmcAdm1n | Harbor console admin password |
+| 3 | SMTP_PASSWORD | dummy | MailHog mailbox does not require a password |
+| 4 | SMART_SYSTEM_PASSWORD | bmcAdm1n | All passwords are set to bmcAdm1n for easy memorization |
 | 9 | ES_JKS_PASSWORD | bmcAdm1n | |
 
-* secrets.txt文件在首次运行Helix安装程序时会被删除，建议一定要做好备份
+* The secrets.txt file will be deleted when you run the Helix installer for the first time. It is recommended to make a backup.
 ```
 cp secrets.txt secrets.txt.bak
 ```
@@ -107,28 +107,28 @@ cp secrets.txt secrets.txt.bak
 ```
 cp /root/opensslfull_chain.crt /root/helix-on-prem-deployment-manager-25.1/commons/../commons/certs/custom_cacert.pem
 ```
-### 1.4 NFS块存储
+### 1.4 NFS and StorageClass
 
-#### 1.4.1 创建NFS服务器
-* 在helix-svc安装NFS服务器软件
+#### 1.4.1 Setup NFS Server
+* Install NFS server software in helix-svc
 ```
 dnf install nfs-utils -y
 ```
 
-* 创建NFS存储目录
+* Create NFS Storage Directory
 ```
 mkdir -p /opt/datastore/helixade
 chown -R nobody:nobody /opt/datastore/helixade
 chmod -R 777 /opt/datastore/helixade
 ```
 
-* 导出目录
+* Export NFS directory
 ```
 echo "/opt/datastore/helixade  192.168.1.0/24(rw,sync,root_squash,no_subtree_check,no_wdelay)" > /etc/exports
 exportfs -rv
 ```
 
-* 为NFS开放防火墙
+* Opening the firewall for NFS
 ```
 firewall-cmd --zone=internal --add-service mountd --permanent
 firewall-cmd --zone=internal --add-service rpc-bind --permanent
@@ -136,20 +136,20 @@ firewall-cmd --zone=internal --add-service nfs --permanent
 firewall-cmd --reload
 ```
 
-* 启动NFS服务
+* Enable and start NFS service
 ```
 systemctl enable nfs-server rpcbind
 systemctl start nfs-server rpcbind nfs-mountd
 ```
 
-* 验证NFS目录
+* Verify NFS Directory
 ```
 showmount -e
 ```
 
-#### 1.4.2 创建NFS StorageClass
+#### 1.4.2 Create StorageClass on NFS
 
-* NFS Storage Class的创建，可以参考文档[nfs-subdir-external-provisioner](https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner)
+* For the creation of NFS Storage Class, please refer to the document[nfs-subdir-external-provisioner](https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner)
 
 ```
 #Create namespace for storageclass
@@ -158,31 +158,31 @@ helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/
 helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set nfs.server=192.168.1.1 --set nfs.path=/opt/datastore/helixade --set storageClass.name=nfs-storage -n infra
 ```
 
-* 验证是否创建成功
+* Verify the storageclass
 ```
 kubectl -n infra get pod
 kubectl get sc
 ```
-### 1.5 安装HAProxy作为Load Balancer
+### 1.5 Install HAProxy as Load Balancer
 
-* 安装HAProxy
+* Install HAProxy
 ```
 dnf install haproxy -y
 ```
 
-* 拷贝配置文件
+* Copy config file
 ```
 \cp ~/helix-metal-install/haproxy.cfg /etc/haproxy/haproxy.cfg
 ```
 
-* 启动HAProxy
+* Enable and start HAProxy
 ```
 systemctl enable haproxy
 systemctl start haproxy
 systemctl status haproxy
 ```
 
-* 开放防火墙端口
+* Open firewall for HAProxy service
 ```
 firewall-cmd --add-service=http --zone=internal --permanent # web services hosted on worker nodes
 firewall-cmd --add-service=http --zone=external --permanent # web services hosted on worker nodes
@@ -193,27 +193,27 @@ firewall-cmd --add-port=9000/tcp --zone=external --permanent # HAProxy Stats
 firewall-cmd --reload
 ```
 
-* 验证HA，浏览器访问https:192.168.1.1:9000/stats
+* Verify HAProxy, browser access https:192.168.1.1:9000/stats
 ![044d1c75861e15c1846bb1d9adf632fd.png](en-resource://database/697:1)
 
-可以看到队列状态不是UP，是因为还没有配置，属于正常情况
+You can see that the queue status is not UP because it has not been configured yet, which is normal.
 
-### 1.6 邮件服务器
+### 1.6 MailHog as eMail Server
 
-* 运行容器版的mailhog邮件服务器，为Helix安装时使用
+* Run the containerized version of the mailhog mail server to provide mail services for the Helix installation
 ```
-#添加helm repo
+#Add helm repo
 helm repo add codecentric https://codecentric.github.io/helm-charts
 helm repo update
 
-#安装MailHog helm chart
+#Install MailHog helm chart
 helm install mailhog codecentric/mailhog -n email --create-namespace --set service.type=NodePort
 
-#验证邮件服务创建成功（STATUS=Running）
+#Verify that the email service was created successfully（STATUS=Running）
 kubectl -n email get pod
 ```
 
-* 查询服务端口信息
+* Query service port information
 ```
 node_ip=$(kubectl get nodes -o=jsonpath='{.items[0].status.addresses[0].address}')
 web_port=$(kubectl --namespace email get svc mailhog -o=jsonpath="{.spec.ports[?(@.name=='http')].nodePort}")
@@ -226,9 +226,9 @@ echo "MailHog SMTP port at $node_ip:$smtp_port"
 MailHog Web UI at http://192.168.1.200:31532
 MailHog SMTP port at 192.168.1.200:32354
 ```
-说明邮件控制台是http://192.168.1.200:31532，发送接口是192.168.1.200:32354
+The above output shows that the mail console is http://192.168.1.200:31532 and the sending interface is 192.168.1.200:32354
 
-* 修改HAProxy配置文件，调整mailhog的端口为SMTP port输出值
+* Modify the HAProxy configuration file and adjust the mailhog port to the SMTP port output value
 ```
 vi /etc/haproxy/haproxy.cfg
 ```
@@ -237,14 +237,15 @@ backend mailhog
     balance     leastconn
     server helix-k8s-worker01 192.168.1.200:**32354** check
 
-* 重启HAProxy服务，使变更生效
+* Restart the HAProxy service and enable the new configuration file
 ```
 systemctl restart haproxy
 ```
 
-* 查看HAProxy控制台，验证mailhog运行
+* Check the HAProxy console to verify that mailhog is running
+![fa2f2ebfe45a075b10739fe59e4c2926.png](en-resource://database/753:0)
 
-* 添加放开防火墙端口
+* Open firewall ports for MailHog
 ```
 firewall-cmd --add-port=25/tcp --zone=internal --permanent
 firewall-cmd --add-port=31532/tcp --zone=internal --permanent
@@ -252,7 +253,7 @@ firewall-cmd --add-port=32354/tcp --zone=internal --permanent
 firewall-cmd --reload
 ```
 
-* 测试发邮件
+* Send test mail
 ```
 dnf install epel-release -y 
 dnf install swaks -y
@@ -260,19 +261,19 @@ dnf install swaks -y
 swaks -f host-test@me -t local@me -s $node_ip -p $smtp_port --body "this is a test" --header "Subject: host validation via port: $smtp_port"
 swaks -f host-test@me -t local@me -s 192.168.1.1 -p 25 --body "this is a test" --header "Subject: host validation via port: 25"
 ```
-* 浏览器登录邮件控制台 https://192.168.1.200:31532，可以查看到两封邮件，分别发送给原端口和HAProxy代理的25端口
+* Log in to the email console https://192.168.1.200:31532 through the browser, and you can see two emails, one sent to the original port and the other to port 25 of the HAProxy proxy
 ![58c4cf54dae22f61db0f730a1b449302.png](en-resource://database/699:1)
 
 
 ### 1.7 Ingress
-Helix从24.3开始支持两种类型的Kubernetes反向代理和负载均衡
+Helix supports two types of Kubernetes reverse proxy and load balancing starting from 24.3
 
 * NGINX Open Source Ingress Controller
 * F5 NGINX Plus Ingress Controller
 
-本文档中采用的是第一种。详细的介绍与安装步骤请参考文档[IngressController](https://docs.bmc.com/xwiki/bin/view/IT-Operations-Management/On-Premises-Deployment/BMC-Helix-IT-Operations-Management-Deployment/itomdeploy251/Deploying/Preparing-for-deployment/Deploying-and-configuring-the-NGINX-Open-Source-Ingress-Controller/)
+This document uses the first method. For detailed introduction and installation steps, please refer to the document[IngressController](https://docs.bmc.com/xwiki/bin/view/IT-Operations-Management/On-Premises-Deployment/BMC-Helix-IT-Operations-Management-Deployment/itomdeploy251/Deploying/Preparing-for-deployment/Deploying-and-configuring-the-NGINX-Open-Source-Ingress-Controller/)
 
-* 删除旧的ingress-nginx命名空间
+* Delete the old ingress-nginx namespace
 
 ```
 kubectl delete ds -n ingress-nginx ingress-nginx-controller
@@ -283,26 +284,26 @@ kubectl delete ValidatingWebhookConfiguration ingress-nginx-admission
 kubectl delete ns ingress-nginx
 ```
 
-* 下载对应kubernetes版本的[NGINX Ingress Controller](https://docs.bmc.com/xwiki/bin/view/IT-Operations-Management/On-Premises-Deployment/BMC-Helix-IT-Operations-Management-Deployment/itomdeploy251/Planning/System-requirements/) 
+* Download the corresponding kubernetes version [NGINX Ingress Controller](https://docs.bmc.com/xwiki/bin/view/IT-Operations-Management/On-Premises-Deployment/BMC-Helix-IT-Operations-Management-Deployment/itomdeploy251/Planning/System-requirements/) 
 
 ```
 dnf install wget -y
 wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.4/deploy/static/provider/cloud/deploy.yaml
 ```
 
-* 编辑修改下载的deploy.yaml文件
+* Edit and modify the downloaded deploy.yaml file
 
     Change the kind field of the ingress-nginx-controller from **Deployment** to **DaemonSet**
     Under kind: **Daemonset**, change the spec.**strategy** field to spec.**updateStrategy**
     Under kind: **Daemonset**, locate **securityContext**, and then set the value of the flag **allowPrivilegeEscalation** as **true**
 
-*  部署deploy.yaml
+*  Deploy deploy.yaml
 ```
 kubectl create ns ingress-nginx
 kubectl apply -f deploy.yaml
 ```
 
-* 等待Ingress Nginx创建结束
+* Wait for Ingress Nginx to be created
 ```
 kubectl -n ingress-nginx get all
 
@@ -326,24 +327,24 @@ job.batch/ingress-nginx-admission-create   Complete   1/1           35s        1
 job.batch/ingress-nginx-admission-patch    Complete   1/1           35s        112s
 ```
 
-* 创建secret my-tls-secret
+* Create secret my-tls-secret
 ```
 kubectl create secret tls my-tls-secret --cert=/root/openssl/bmc.local.crt --key=/root/openssl/bmc.local.key -n ingress-nginx
 ```
 
-* 修改daemonset，将缺省SSL证书指向my-tls-secret
+* Modify daemonset to point the default SSL certificate to my-tls-secret
 ```
 kubectl edit daemonset ingress-nginx-controller -n ingress-nginx
 ```
-修改后的配置如下：
+The modified configuration is as follows:
 ![2eb13f3420d6b7d5783b23c1e2d8cbc3.png](en-resource://database/701:1)
 
-* 修改ngress-nginx-controller
+* Modify ingress-nginx-controller
 ```
 kubectl edit cm ingress-nginx-controller -n ingress-nginx
 ```
 
-* 在data下增加如下内容：
+* Add the following content under data:
 
 ```
   enable-underscores-in-headers: "true"  
@@ -355,25 +356,25 @@ kubectl edit cm ingress-nginx-controller -n ingress-nginx
   allow-snippet-annotations: "true"
 ```
 
-* 修改后如下图：
+* After modification, the figure is as follows:
 
 ![805725f82334d5b4441f7f6530ed99ea.png](en-resource://database/703:1)
 
-* 重启daemonset
+* Restart daemonset
 ```
 kubectl -n ingress-nginx rollout restart ds ingress-nginx-controller
 ```
 
-* 等待pod重启完成
+* Wait for the pod restart to complete
 ```
 kubectl -n ingress-nginx get pod
 ```
 
-* 验证采用了新的Ingress Controller版本
+* Verify that the new Ingress Controller version is used
 ```
 kubectl -n ingress-nginx describe <pod name> | grep -i image
 ```
-验证结果如下图，
+The verification results are as follows:
 ```
 [root@helix-svc openssl]# kubectl -n ingress-nginx get pod
 NAME                                   READY   STATUS      RESTARTS   AGE
@@ -390,17 +391,17 @@ error: the server doesn't have a resource type "ingress-nginx-controller-2q2vg"
     Image ID:        docker-pullable://registry.k8s.io/ingress-nginx/controller@sha256:981a97d78bee3109c0b149946c07989f8f1478a9265031d2d23dea839ba05b52
   Normal  Pulled     50s   kubelet                   Container image "registry.k8s.io/ingress-nginx/controller:v1.11.4@sha256:981a97d78bee3109c0b149946c07989f8f1478a9265031d2d23dea839ba05b52" already present on machine
 ```
-* 删除Validating Webhook Configuration，否则可能会妨碍ingress对象的发布
+* Delete the Validating Webhook Configuration, otherwise it may prevent the release of the ingress object
 ```
 kubectl delete job ingress-nginx-admission-create ingress-nginx-admission-patch -n ingress-nginx --ignore-not-found=true
 kubectl -n ingress-nginx delete -A ValidatingWebhookConfiguration ingress-nginx-admission
 ```
-* 更新服务ingress-nginx-controller将external IP指向服务在均衡器的地址
+* Update the service ingress-nginx-controller to point the external IP to the address of the service on the balancer
 ```
 kubectl patch service/ingress-nginx-controller -n ingress-nginx -p '{"spec":{"externalIPs":["192.168.1.1"]}}'
 ```
 
-* 验证ingress-nginx-controller被成功更改
+* Verify that ingress-nginx-controller has been successfully changed
 ```
 kubectl -n ingress-nginx get service
 
@@ -409,85 +410,81 @@ ingress-nginx-controller             LoadBalancer   10.43.144.239   192.168.1.1 
 ingress-nginx-controller-admission   ClusterIP      10.43.137.171   <none>        443/TCP                      55m
 ```
 
-* 根据返回的443映射端口号（本例中是31019），更改HAProxy的配置
+* Change the HAProxy configuration based on the returned 443 mapping port number (31019 in this example).
 ```
 vi /etc/haproxy/haproxy.cfg
 ```
 
-* 更改后的效果截图
+* Screenshot of the effect after the change
 ![b027fdec6d6e0ca6899128374a7f98b6.png](en-resource://database/705:1)
 
-* 重启HAProxy服务，启用新配置
+* Restart the HAProxy service to enable the new configuration
 ```
 systemctl restart haproxy
 ```
 
-* 浏览器登录HAProxy控制台，验证结果
+* Log in to the HAProxy console with a browser and verify the result
 ![69e6aece587f5bbeafccb163ff9585b6.png](en-resource://database/707:1)
 
 
+## 2 Deploy Helix Dashboard
 
-
-
-
-## 2 安装Helix Dashboard
-
-### 2.1 执行Helix Deployment Manager
-* 在helix-svc服务器上执行Helix ITOM安装程序
+### 2.1 Run Helix Deployment Manager
+* Execute the Helix deployment manager on the helix-svc server
 
 ```
 cd /root//root/helix-on-prem-deployment-manager-25.1
 ./deployment-manager.sh
 ```
 
-* 等待安装程序执行完成：
+* Wait for the installer to complete:
 
-![0b6482feaff0c8c0577d88670c5a260e.png](en-resource://database/709:0)
+![0b6482feaff0c8c0577d88670c5a260e.png](en-resource://database/709:1)
 
-### 2.2 CA证书导入
+### 2.2 Import the CA certificate into the Windows server where the browser is located
 
-* 查看Helix Portal帐户激活邮件
+* Check Helix Portal account activation email
 
-![e2a2e48fca0ef712078e8872c43dee8e.png](en-resource://database/711:0)
+![e2a2e48fca0ef712078e8872c43dee8e.png](en-resource://database/711:1)
 
-* 点击邮件中“Sign in to activate your account”链接，弹出浏览器登录Helix Portal页面，报错“net::ERR_CERT_AUTHORITY_INVALID”，这是正常。因为Helix使用的Https签名CA是自定义的，需要将CA证书导入信任Store.
-![0fd9f52381c9a891a3df932a56338798.png](en-resource://database/713:0)
+* Click the "Sign in to activate your account" link in the email, and the browser will pop up the Helix Portal login page, and the error "net::ERR_CERT_AUTHORITY_INVALID" will be reported. This is normal. Because the Https signing CA used by Helix is customized, the CA certificate needs to be imported into the trust store.
+![0fd9f52381c9a891a3df932a56338798.png](en-resource://database/713:1)
 
-* helix-svc主机上/root/openssl/HelixCA.crt文件拷贝到当前Windows主机，并鼠标双击
-![2209d4889b8ad5ebf53e8fc1f80fa9bb.png](en-resource://database/715:0)
+* Copy the /root/openssl/HelixCA.crt file on the helix-svc host to the current Windows host and double-click it.
+![2209d4889b8ad5ebf53e8fc1f80fa9bb.png](en-resource://database/715:1)
 
-* 进入证书导入向导，选择本地本地机器
-![bd51f9c8a111c2a56f0dd59d10b79985.png](en-resource://database/717:0)
-* 选择可信的根证书认证
-![f12fc173d25a9d01ed54d65f3ca4de44.png](en-resource://database/719:0)
+* Enter the Certificate Import Wizard and select Local Machine
+![bd51f9c8a111c2a56f0dd59d10b79985.png](en-resource://database/717:1)
+* Select Trusted Root Certificate
+![f12fc173d25a9d01ed54d65f3ca4de44.png](en-resource://database/719:1)
 
-* 再次刷新浏览器登录界面，设置缺省管理员账户hannah_admin的密码
-![840eba727e3cac46f000a9e2d141b528.png](en-resource://database/721:0)
+* Refresh the browser login interface again and set the password for the default administrator account hannah_admin
+![840eba727e3cac46f000a9e2d141b528.png](en-resource://database/721:1)
 
-* 完成Helix Portal的安装
-![9439743c1c0b70671fe57d773eb9f084.png](en-resource://database/723:0)
+* Complete the Helix Portal installation
+![9439743c1c0b70671fe57d773eb9f084.png](en-resource://database/723:1)
 
-## 3 安装Helix Discovery
-BMC Helix Discovery是Helix ITOM的基础组件，必须先成功安装配置Helix Discovery之后，才能其他Helix ITOM组件。Helix Discovery是以虚拟机OVF文件方式交付，以VM形式运行。
+## 3 Deploy Helix Discovery
+BMC Helix Discovery is a basic component of Helix ITOM. You must successfully install and configure Helix Discovery before installing other Helix ITOM components. Helix Discovery is delivered as a virtual machine OVF file and runs as a VM.
 
-### 3.1 虚拟机导入和配置
+### 3.1 Helix Discovery virtual machine import and configuration
 
-* 在虚拟机控制台，创建虚拟机，选择从OVF或OVA文件方式创建
+* In the virtual machine console, create a virtual machine and choose to create it from an OVF or OVA file.
 
-![287f70243149207549f405f3adff6fcf.png](en-resource://database/725:0)
+![287f70243149207549f405f3adff6fcf.png](en-resource://database/725:1)
 
-* 定义主机名，选择OVF文件，完成导入过程
+* Define the hostname, select the OVF file, and complete the import process
 
-![1f042036a7d12eef48537057b21af1f6.png](en-resource://database/727:0)
+![1f042036a7d12eef48537057b21af1f6.png](en-resource://database/727:1)
 
-* 登录helix-discovery服务器，使用内置用户tideway/tidewayuser，修改密码bmcAdm1n%
+* Login to the helix-discovery server, use the built-in user tideway/tidewayuser, and change the password to bmcAdm1n%
 
-![89fc3d307726efd596af69cbe3f581f3.png](en-resource://database/729:0)
+![89fc3d307726efd596af69cbe3f581f3.png](en-resource://database/729:1)
 
-* 转换到root用户，缺省密码tideway，首次登陆时，需要更改密码为bmcAdm1n$
-![d80db88a56ef7231e9bdb063da66a6be.png](en-resource://database/731:0)
+* Switch to the root user, the default password is tideway. When you login for the first time, you need to change the password to bmcAdm1n$
+![d80db88a56ef7231e9bdb063da66a6be.png](en-resource://database/731:1)
 
-* 设置时区
+* Setup time zone
 ```
 #set timezone
 timedatectl set-timezone Asia/Shanghai 
@@ -496,33 +493,33 @@ timedatectl set-timezone Asia/Shanghai
 timedatectl
 ```
 
-* 转换到netadmin用户，进入网络管理Shell
-![db03ca14cbfb97713592ab62599915c8.png](en-resource://database/733:0)
+* Switch to netadmin user and enter the network management shell
+![db03ca14cbfb97713592ab62599915c8.png](en-resource://database/733:1)
 
-* 先选择G选项，再选择H选项，配置主机名为helix-discovery，C选项提交，Q选项退回主菜单
+* Select option G first, then option H, configure the host name to helix-discovery, option C to submit, and option Q to return to the main menu
 
-![03316abad339442a74efdd31d1f204d6.png](en-resource://database/735:0)
+![03316abad339442a74efdd31d1f204d6.png](en-resource://database/735:1)
 
 
-* 选择I选项，1选项，重新配置网卡，设置：
+* Select option I, option 1, reconfigure the network card, and set:
 DHCP: n
  IPv4 Address: 192.168.1.210
  Netmask: 255.255.255.0
  IPv4 Gateway: 192.168.1.1
  IPv6: n
  Enable on boot: y
-选择选项C提交，y确认更改，再选择选项Q退回主菜单，最后选择选项R，重启虚拟机，完整虚拟机配置
-![2a0c452ae85d2f162c4c4b18c753e154.png](en-resource://database/737:0)
+Select option C to submit, y to confirm the changes, then select option Q to return to the main menu, and finally select option R to restart the virtual machine and complete the virtual machine configuration.
+![2a0c452ae85d2f162c4c4b18c753e154.png](en-resource://database/737:1)
 
-### 3.2 Helix控制台配置
-使用浏览器登录Helix控制台https://192.168.1.210，使用内置登录用户名system，缺省密码system
-![88249e3bf942988c45a9af607b1c8eec.png](en-resource://database/739:0)
+### 3.2 Config Helix Discovery console
+Use a browser to login to the Helix Discovery console at https://192.168.1.210, use the built-in login username system, and the default password system
+![88249e3bf942988c45a9af607b1c8eec.png](en-resource://database/739:1)
 
-* 首次登录，需要修改system用户密码，比如改为bmcAdm1n#
+* When logging in for the first time, you need to change the system user password, for example, to bmcAdm1n#
 
-![c348ea1151f8cd83e973e788690f8ee1.png](en-resource://database/741:0)
+![c348ea1151f8cd83e973e788690f8ee1.png](en-resource://database/741:1)
 
-* 在测试环境为方便测试使用，建议修改安全策略，取消密码限制。Administration菜单，-> Security Policy试图
+* To facilitate testing, it is recommended to modify the security policy and cancel the password restriction. Administration menu -> Security Policy view
 Check out below options:
 Must contain uppercase characters
 Must contain lowercase characters
@@ -531,30 +528,30 @@ Must contain special characters
 Must not contain sequences
 Must not match a common dictionary password
 
-![3186c53f04369808961f050a7e2ee29e.png](en-resource://database/743:0)
+![3186c53f04369808961f050a7e2ee29e.png](en-resource://database/743:1)
 
-* 为了方便记忆，将密码改为bmcAdm1n，与secrets.txt中的SMART_SYSTEM_PASSWORD值一致
+* For easier memorization, change the password to bmcAdm1n, which is consistent with the SMART_SYSTEM_PASSWORD value in secrets.txt.
 
-![dd95bcf060397efece2925a5b7daf3b6.png](en-resource://database/745:0)
+![dd95bcf060397efece2925a5b7daf3b6.png](en-resource://database/745:1)
 
-* 进入菜单Administration->Appliance Configuration->Name Resolution视图设置DNS
+* Enter the menu Administration->Appliance Configuration->Name Resolution view to set DNS
 Search Domain: bmc.local
 Name Servers: 192.168.1.1
 
-![ea956a35a93df842d4506147dd141b1e.png](en-resource://database/747:0)
+![ea956a35a93df842d4506147dd141b1e.png](en-resource://database/747:1)
 
-* 进入菜单Administration->Time Sync视图NTP
-![46350ea2439fb8d73f8a0906a932a373.png](en-resource://database/749:0)
+* Enter the menu Administration->Time Sync view NTP
+![46350ea2439fb8d73f8a0906a932a373.png](en-resource://database/749:1)
 
-* 上传Helix CA证书作为可信证书
-Administration-> Single Sign On视图，Upload CA Bundle
-![66e945683501bb7ba5b7424410435f0b.png](en-resource://database/751:0)
+* Upload the Helix CA certificate as a trusted certificate
+Administration->Single Sign On view，Upload CA Bundle
+![66e945683501bb7ba5b7424410435f0b.png](en-resource://database/751:1)
 
 
-## 4 安装其他ITOM组件
-Helix ITOM组件包括如下列表，选择安装哪个组件，在deployment.config文件中将对应的参数值改为yes，并重新执行/deployment-manager.sh即可
+## 4 Install other ITOM components
+Helix ITOM components include the following list. Select the component to install, change the corresponding parameter value to yes in the deployment.config file, and re-execute /deployment-manager.sh
 
-| 行号 | 参数名 | 组件名 |
+| Line no. | Parameter | Helix ITOM Component |
 | --- | --- | --- |
 | 42 | AIOPS_SERVICES | Helix Service Monitoring |
 | 45 | MONITOR | Helix Operations Management |
@@ -562,4 +559,14 @@ Helix ITOM组件包括如下列表，选择安装哪个组件，在deployment.co
 | 51 | INTELLIGENT_AUTOMATION | Helix Intelligent Automation |
 | 54 | OPTIMIZE | Helix Continuous Optimization |
 | 62 | AUTOANAMOLY | Helix Operations Management & Helix Service Monitoring |
+
+## 5 Import PATROL KM to Helix Monitor repository
+
+
+```
+cp -R ~/helix-metal-install/BHOM-KMImport /root
+cd /root/HOM-KMImport
+chmod a+x *.sh
+import-signle-KM-to-repository.sh <KM> <TenantID> <NameSpace>
+```
 
