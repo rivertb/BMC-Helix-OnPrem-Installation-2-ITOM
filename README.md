@@ -1,12 +1,19 @@
 # BMC HelixOM ITOM & ITSM OnPrem Installation Step by Step 2 - ITOM
 
+- [BMC HelixOM ITOM & ITSM OnPrem Installation Step by Step 2 - ITOM](#bmc-helixom-itom-&-itsm-onprem-installation-step-by-step-2---itom)
+  - [1 Pre-installation preparation](#1-pre-installation-preparation)
+  - [2 Deploy Helix Dashboard](#2-deploy-helix-dashboard)
+  - [3 Deploy Helix Discovery](#3-deploy-helix-discovery)
+  - [4 Install other ITOM components)](#4-install-other-itom-components)
+  - [5 Import PATROL KM to Helix Monitor repository)](#5-import-patrol-km-to-helix-monitor-repository)
+  
 ## 1 Pre-installation preparation
 ### 1.1 Download Helix Deployment Manager
 The Helix ITOM installation process is completed by helix deployment manager.
 
-* Login to [EPD](https://webepd.bmc.com/edownloads/ddl/cv/LP/442432/537020?fltk_=VTH1iwPCxfU%3D)，Download the latest versionhelix-on-prem-deployment-manager-<release_version>.sh file，eg. helix-on-prem-deployment-manager-25.1.00-45.sh
+* Login to [EPD](https://webepd.bmc.com/edownloads/ddl/cv/LP/442432/537020?fltk_=VTH1iwPCxfU%3D)，Download the latest version of helix-on-prem-deployment-manager-<release_version>.sh file，eg. helix-on-prem-deployment-manager-25.1.00-45.sh
 
-![a3dfaebecc8a821b8ad7196eb517b21a.png](en-resource://database/683:1)
+![EPD Helix Deployment Manager](./diagram/epd-helix-deployment-manager.png)
 
 * Upload helix-on-prem-deployment-manager-25.1.00-45.sh to the helix-svc server
 
@@ -194,7 +201,7 @@ firewall-cmd --reload
 ```
 
 * Verify HAProxy, browser access https:192.168.1.1:9000/stats
-![044d1c75861e15c1846bb1d9adf632fd.png](en-resource://database/697:1)
+![Helix Status 1](./diagram/haproxy-status-1.png)
 
 You can see that the queue status is not UP because it has not been configured yet, which is normal.
 
@@ -243,7 +250,7 @@ systemctl restart haproxy
 ```
 
 * Check the HAProxy console to verify that mailhog is running
-![fa2f2ebfe45a075b10739fe59e4c2926.png](en-resource://database/753:0)
+![Helix Status 2](./diagram/haproxy-status-2.png)
 
 * Open firewall ports for MailHog
 ```
@@ -262,8 +269,7 @@ swaks -f host-test@me -t local@me -s $node_ip -p $smtp_port --body "this is a te
 swaks -f host-test@me -t local@me -s 192.168.1.1 -p 25 --body "this is a test" --header "Subject: host validation via port: 25"
 ```
 * Log in to the email console https://192.168.1.200:31532 through the browser, and you can see two emails, one sent to the original port and the other to port 25 of the HAProxy proxy
-![58c4cf54dae22f61db0f730a1b449302.png](en-resource://database/699:1)
-
+![MailHog Test eMails](./diagram/mailhog-test-emails.png)
 
 ### 1.7 Ingress
 Helix supports two types of Kubernetes reverse proxy and load balancing starting from 24.3
@@ -293,9 +299,9 @@ wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11
 
 * Edit and modify the downloaded deploy.yaml file
 
-    Change the kind field of the ingress-nginx-controller from **Deployment** to **DaemonSet**
-    Under kind: **Daemonset**, change the spec.**strategy** field to spec.**updateStrategy**
-    Under kind: **Daemonset**, locate **securityContext**, and then set the value of the flag **allowPrivilegeEscalation** as **true**
+    Change the kind field of the ingress-nginx-controller from **Deployment** to **DaemonSet**
+    Under kind: **Daemonset**, change the spec.**strategy** field to spec.**updateStrategy**
+    Under kind: **Daemonset**, locate **securityContext**, and then set the value of the flag **allowPrivilegeEscalation** as **true**
 
 *  Deploy deploy.yaml
 ```
@@ -337,7 +343,7 @@ kubectl create secret tls my-tls-secret --cert=/root/openssl/bmc.local.crt --key
 kubectl edit daemonset ingress-nginx-controller -n ingress-nginx
 ```
 The modified configuration is as follows:
-![2eb13f3420d6b7d5783b23c1e2d8cbc3.png](en-resource://database/701:1)
+![my-tls-secret-setting](./diagram/my-tls-secret-setting.png)
 
 * Modify ingress-nginx-controller
 ```
@@ -347,18 +353,17 @@ kubectl edit cm ingress-nginx-controller -n ingress-nginx
 * Add the following content under data:
 
 ```
-  enable-underscores-in-headers: "true"  
-  proxy-body-size: 250m  
-  server-name-hash-bucket-size: "1024"  
-  ssl-redirect: "false"  
-  use-forwarded-headers: "true" 
-  worker-processes: "40" 
+  enable-underscores-in-headers: "true"
+  proxy-body-size: 250m
+  server-name-hash-bucket-size: "1024"
+  ssl-redirect: "false"
+  use-forwarded-headers: "true"
+  worker-processes: "40"
   allow-snippet-annotations: "true"
 ```
 
 * After modification, the figure is as follows:
-
-![805725f82334d5b4441f7f6530ed99ea.png](en-resource://database/703:1)
+![Ingress Nginx Controller](./diagram/ingress-nginx-controller-setting.png)
 
 * Restart daemonset
 ```
@@ -416,7 +421,7 @@ vi /etc/haproxy/haproxy.cfg
 ```
 
 * Screenshot of the effect after the change
-![b027fdec6d6e0ca6899128374a7f98b6.png](en-resource://database/705:1)
+![HAProxy cfg](./diagram/haproxy-cfg.png)
 
 * Restart the HAProxy service to enable the new configuration
 ```
@@ -424,7 +429,7 @@ systemctl restart haproxy
 ```
 
 * Log in to the HAProxy console with a browser and verify the result
-![69e6aece587f5bbeafccb163ff9585b6.png](en-resource://database/707:1)
+![HAProxy Status 3](./diagram/haproxy-status-3.png)
 
 
 ## 2 Deploy Helix Dashboard
@@ -438,31 +443,32 @@ cd /root//root/helix-on-prem-deployment-manager-25.1
 ```
 
 * Wait for the installer to complete:
-
-![0b6482feaff0c8c0577d88670c5a260e.png](en-resource://database/709:1)
+![Completed Helix Installation](./diagram/completed-helix-on-prem-installation.png)
 
 ### 2.2 Import the CA certificate into the Windows server where the browser is located
 
 * Check Helix Portal account activation email
-
-![e2a2e48fca0ef712078e8872c43dee8e.png](en-resource://database/711:1)
+![Activate Portal Account](./diagram/activate-portal-account-eamil.png)
 
 * Click the "Sign in to activate your account" link in the email, and the browser will pop up the Helix Portal login page, and the error "net::ERR_CERT_AUTHORITY_INVALID" will be reported. This is normal. Because the Https signing CA used by Helix is customized, the CA certificate needs to be imported into the trust store.
-![0fd9f52381c9a891a3df932a56338798.png](en-resource://database/713:1)
+![NET::ERR-CERT-AUTHORITY-INVALID](./diagram/net-err-cert-authority-invalid.png)
+
 
 * Copy the /root/openssl/HelixCA.crt file on the helix-svc host to the current Windows host and double-click it.
-![2209d4889b8ad5ebf53e8fc1f80fa9bb.png](en-resource://database/715:1)
+![Install Certification in Chrome](./diagram/install-certification-in-chrome.png)
+
 
 * Enter the Certificate Import Wizard and select Local Machine
-![bd51f9c8a111c2a56f0dd59d10b79985.png](en-resource://database/717:1)
+![Store Location Local Machine](./diagram/store-location-local-machine.png)
+
 * Select Trusted Root Certificate
-![f12fc173d25a9d01ed54d65f3ca4de44.png](en-resource://database/719:1)
+![Trusted Root Certifate](./diagram/trusted-root-certification-authorities.png)
 
 * Refresh the browser login interface again and set the password for the default administrator account hannah_admin
-![840eba727e3cac46f000a9e2d141b528.png](en-resource://database/721:1)
+![Change hannah-admin Password](./diagram/hannah_admin-password.png)
 
 * Complete the Helix Portal installation
-![9439743c1c0b70671fe57d773eb9f084.png](en-resource://database/723:1)
+![Helix Portal](./diagram/helix-portal.png)
 
 ## 3 Deploy Helix Discovery
 BMC Helix Discovery is a basic component of Helix ITOM. You must successfully install and configure Helix Discovery before installing other Helix ITOM components. Helix Discovery is delivered as a virtual machine OVF file and runs as a VM.
@@ -470,19 +476,16 @@ BMC Helix Discovery is a basic component of Helix ITOM. You must successfully in
 ### 3.1 Helix Discovery virtual machine import and configuration
 
 * In the virtual machine console, create a virtual machine and choose to create it from an OVF or OVA file.
-
-![287f70243149207549f405f3adff6fcf.png](en-resource://database/725:1)
+![Import Helix Discovery VM](./diagram/import-discovery-ovf.png)
 
 * Define the hostname, select the OVF file, and complete the import process
-
-![1f042036a7d12eef48537057b21af1f6.png](en-resource://database/727:1)
+![Select Helix Discovery OVF file](./diagram/select-helix-discovery-ovf.png)
 
 * Login to the helix-discovery server, use the built-in user tideway/tidewayuser, and change the password to bmcAdm1n%
-
-![89fc3d307726efd596af69cbe3f581f3.png](en-resource://database/729:1)
+![Login Helix Discovery with tideway](./diagram/login-helix-discovery-with-tideway.png)
 
 * Switch to the root user, the default password is tideway. When you login for the first time, you need to change the password to bmcAdm1n$
-![d80db88a56ef7231e9bdb063da66a6be.png](en-resource://database/731:1)
+![Helix Discovery switch to root](./diagram/helix-discovery-switch-to-root.png)
 
 * Setup time zone
 ```
@@ -494,11 +497,10 @@ timedatectl
 ```
 
 * Switch to netadmin user and enter the network management shell
-![db03ca14cbfb97713592ab62599915c8.png](en-resource://database/733:1)
+![Helix Discovery switch to netadmin](./diagram/helix-discovery-switch-to-netadmin.png)
 
 * Select option G first, then option H, configure the host name to helix-discovery, option C to submit, and option Q to return to the main menu
-
-![03316abad339442a74efdd31d1f204d6.png](en-resource://database/735:1)
+![Helix Discovery set hostname](./diagram/helix-discovery-set-hostname.png)
 
 
 * Select option I, option 1, reconfigure the network card, and set:
@@ -509,15 +511,15 @@ DHCP: n
  IPv6: n
  Enable on boot: y
 Select option C to submit, y to confirm the changes, then select option Q to return to the main menu, and finally select option R to restart the virtual machine and complete the virtual machine configuration.
-![2a0c452ae85d2f162c4c4b18c753e154.png](en-resource://database/737:1)
+![Helix Discovery set network](./diagram/helix-discovery-set-network.png)
 
 ### 3.2 Config Helix Discovery console
 Use a browser to login to the Helix Discovery console at https://192.168.1.210, use the built-in login username system, and the default password system
-![88249e3bf942988c45a9af607b1c8eec.png](en-resource://database/739:1)
+![Helix Discovery login](./diagram/helix-discovery-login.png)
 
 * When logging in for the first time, you need to change the system user password, for example, to bmcAdm1n#
+![Helix Discovery set password for system](./diagram/helix-discovery-set-password-for-system.png)
 
-![c348ea1151f8cd83e973e788690f8ee1.png](en-resource://database/741:1)
 
 * To facilitate testing, it is recommended to modify the security policy and cancel the password restriction. Administration menu -> Security Policy view
 Check out below options:
@@ -528,24 +530,23 @@ Must contain special characters
 Must not contain sequences
 Must not match a common dictionary password
 
-![3186c53f04369808961f050a7e2ee29e.png](en-resource://database/743:1)
+![Helix Discovery change Security Policy](./diagram/helix-discovery-change-security-policy.png)
 
 * For easier memorization, change the password to bmcAdm1n, which is consistent with the SMART_SYSTEM_PASSWORD value in secrets.txt.
-
-![dd95bcf060397efece2925a5b7daf3b6.png](en-resource://database/745:1)
+![Helix Discovery set system password to bmcAdm1n](./diagram/helix-discovery-set-password-for-system2.png)
 
 * Enter the menu Administration->Appliance Configuration->Name Resolution view to set DNS
 Search Domain: bmc.local
 Name Servers: 192.168.1.1
 
-![ea956a35a93df842d4506147dd141b1e.png](en-resource://database/747:1)
+![Helix Discovery set system Name Resolution](./diagram/helix-discovery-set-name-resolution.png)
 
 * Enter the menu Administration->Time Sync view NTP
-![46350ea2439fb8d73f8a0906a932a373.png](en-resource://database/749:1)
+![Helix Discovery set Time Sync](./diagram/helix-discovery-set-time-sync.png)
 
 * Upload the Helix CA certificate as a trusted certificate
 Administration->Single Sign On view，Upload CA Bundle
-![66e945683501bb7ba5b7424410435f0b.png](en-resource://database/751:1)
+![Helix Discovery upload Trustred CA](./diagram/helix-discovery-upload-trusted-ca.png)
 
 
 ## 4 Install other ITOM components
@@ -561,8 +562,6 @@ Helix ITOM components include the following list. Select the component to instal
 | 62 | AUTOANAMOLY | Helix Operations Management & Helix Service Monitoring |
 
 ## 5 Import PATROL KM to Helix Monitor repository
-
-
 ```
 cp -R ~/helix-metal-install/BHOM-KMImport /root
 cd /root/HOM-KMImport
