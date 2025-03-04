@@ -8,8 +8,11 @@
   - [5 Import PATROL KM to Helix Monitor repository)](#5-import-patrol-km-to-helix-monitor-repository)
   
 ## 1 Pre-installation preparation
+
+The installation environment of this project depends on [BMC-Helix-OnPrem-Installation-1-Env](https://github.com/rivertb/BMC-Helix-OnPrem-Installation-1-Env). Please complete it before proceeding.
+
 ### 1.1 Download Helix Deployment Manager
-The Helix ITOM installation process is completed by helix deployment manager.
+Unlike Helix ITSM, the installation of Helix ITOM components is relatively simple. All installation is done independently by Helix Deployment Manager. Before installation, we need to download Helix Deployment Manager.
 
 * Login to [EPD](https://webepd.bmc.com/edownloads/ddl/cv/LP/442432/537020?fltk_=VTH1iwPCxfU%3D)，Download the latest version of helix-on-prem-deployment-manager-<release_version>.sh file，eg. helix-on-prem-deployment-manager-25.1.00-45.sh
 
