@@ -574,7 +574,7 @@ Helix ITOM components include the following list. Select the component to instal
 
 ## 5 Import PATROL KM to Helix Monitor repository
 ```
-cp -R ~/helix-metal-install/BHOM-KMImport /root
+cp -R ~/BMC-Helix-OnPrem-Installation-1-Env/BHOM-KMImport /root
 cd /root/HOM-KMImport
 chmod a+x *.sh
 import-signle-KM-to-repository.sh <KM> <TenantID> <NameSpace>
