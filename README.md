@@ -363,6 +363,7 @@ kubectl edit cm ingress-nginx-controller -n ingress-nginx
 ```
 
 * After modification, the figure is as follows:
+
 ![Ingress Nginx Controller](./diagram/ingress-nginx-controller-setting.png)
 
 * Restart daemonset
@@ -421,6 +422,7 @@ vi /etc/haproxy/haproxy.cfg
 ```
 
 * Screenshot of the effect after the change
+
 ![HAProxy cfg](./diagram/haproxy-cfg.png)
 
 * Restart the HAProxy service to enable the new configuration
@@ -455,13 +457,16 @@ cd /root//root/helix-on-prem-deployment-manager-25.1
 
 
 * Copy the /root/openssl/HelixCA.crt file on the helix-svc host to the current Windows host and double-click it.
+
 ![Install Certification in Chrome](./diagram/install-certification-in-chrome.png)
 
 
 * Enter the Certificate Import Wizard and select Local Machine
+
 ![Store Location Local Machine](./diagram/store-location-local-machine.png)
 
 * Select Trusted Root Certificate
+
 ![Trusted Root Certifate](./diagram/trusted-root-certification-authorities.png)
 
 * Refresh the browser login interface again and set the password for the default administrator account hannah_admin
@@ -476,15 +481,19 @@ BMC Helix Discovery is a basic component of Helix ITOM. You must successfully in
 ### 3.1 Helix Discovery virtual machine import and configuration
 
 * In the virtual machine console, create a virtual machine and choose to create it from an OVF or OVA file.
+
 ![Import Helix Discovery VM](./diagram/import-discovery-ovf.png)
 
 * Define the hostname, select the OVF file, and complete the import process
+
 ![Select Helix Discovery OVF file](./diagram/select-helix-discovery-ovf.png)
 
 * Login to the helix-discovery server, use the built-in user tideway/tidewayuser, and change the password to bmcAdm1n%
+
 ![Login Helix Discovery with tideway](./diagram/login-helix-discovery-with-tideway.png)
 
 * Switch to the root user, the default password is tideway. When you login for the first time, you need to change the password to bmcAdm1n$
+
 ![Helix Discovery switch to root](./diagram/helix-discovery-switch-to-root.png)
 
 * Setup time zone
@@ -500,6 +509,7 @@ timedatectl
 ![Helix Discovery switch to netadmin](./diagram/helix-discovery-switch-to-netadmin.png)
 
 * Select option G first, then option H, configure the host name to helix-discovery, option C to submit, and option Q to return to the main menu
+
 ![Helix Discovery set hostname](./diagram/helix-discovery-set-hostname.png)
 
 
@@ -511,6 +521,7 @@ DHCP: n
  IPv6: n
  Enable on boot: y
 Select option C to submit, y to confirm the changes, then select option Q to return to the main menu, and finally select option R to restart the virtual machine and complete the virtual machine configuration.
+
 ![Helix Discovery set network](./diagram/helix-discovery-set-network.png)
 
 ### 3.2 Config Helix Discovery console
