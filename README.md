@@ -226,15 +226,15 @@ kubectl -n email get pod
 * Query service port information
 ```
 node_ip=$(kubectl get nodes -o=jsonpath='{.items[0].status.addresses[0].address}')
-web_port=$(kubectl --namespace email get svc mailhog -o=jsonpath="{.spec.ports[?(@.name=='http')].nodePort}")
+web_port=$(kubectl --namespace email get svc mailhog -o=jsonpath="{.spec.ports[?(@.name=='http')].nodePort}") 
 smtp_port=$(kubectl --namespace email get svc mailhog -o=jsonpath="{.spec.ports[?(@.name=='tcp-smtp')].nodePort}")
 
 echo "MailHog Web UI at http://$node_ip:$web_port"
 echo "MailHog SMTP port at $node_ip:$smtp_port"
 
 
-MailHog Web UI at http://192.168.1.200:31532
-MailHog SMTP port at 192.168.1.200:32354
+#MailHog Web UI at http://192.168.1.200:31532
+#MailHog SMTP port at 192.168.1.200:32354
 ```
 The above output shows that the mail console is http://192.168.1.200:31532 and the sending interface is 192.168.1.200:32354
 
@@ -258,8 +258,6 @@ systemctl restart haproxy
 * Open firewall ports for MailHog
 ```
 firewall-cmd --add-port=25/tcp --zone=internal --permanent
-firewall-cmd --add-port=31532/tcp --zone=internal --permanent
-firewall-cmd --add-port=32354/tcp --zone=internal --permanent
 firewall-cmd --reload
 ```
 
@@ -268,8 +266,8 @@ firewall-cmd --reload
 dnf install epel-release -y 
 dnf install swaks -y
 # send email using swaks
-swaks -f host-test@me -t local@me -s $node_ip -p $smtp_port --body "this is a test" --header "Subject: host validation via port: $smtp_port"
-swaks -f host-test@me -t local@me -s 192.168.1.1 -p 25 --body "this is a test" --header "Subject: host validation via port: 25"
+swaks -f host-test@me -t local@me -s $node_ip -p $smtp_port --body "this is a test" --header "Subject: host validation via port: $smtp_port" --helo helix-svc.bmc.local
+swaks -f host-test@me -t local@me -s 192.168.1.1 -p 25 --body "this is a test" --header "Subject: host validation via port: 25" --helo helix-svc.bmc.local
 ```
 * Log in to the email console https://192.168.1.200:31532 through the browser, and you can see two emails, one sent to the original port and the other to port 25 of the HAProxy proxy
 ![MailHog Test eMails](./diagram/mailhog-test-emails.png)
@@ -345,6 +343,9 @@ kubectl create secret tls my-tls-secret --cert=/root/openssl/bmc.local.crt --key
 ```
 kubectl edit daemonset ingress-nginx-controller -n ingress-nginx
 ```
+Add:
+"- --default-ssl-certificate=ingress-nginx/my-tls-secret"
+
 The modified configuration is as follows:
 ![my-tls-secret-setting](./diagram/my-tls-secret-setting.png)
 
@@ -443,7 +444,7 @@ systemctl restart haproxy
 * Execute the Helix deployment manager on the helix-svc server
 
 ```
-cd /root//root/helix-on-prem-deployment-manager-25.1
+cd /root//helix-on-prem-deployment-manager-25.1
 ./deployment-manager.sh
 ```
 
