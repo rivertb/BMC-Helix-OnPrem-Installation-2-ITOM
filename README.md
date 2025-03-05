@@ -115,7 +115,7 @@ cp secrets.txt secrets.txt.bak
 ```
 #### 1.2.4 custom_cacert.pem
 ```
-cp /root/opensslfull_chain.crt /root/helix-on-prem-deployment-manager-25.1/commons/../commons/certs/custom_cacert.pem
+cp /root/openssl/HelixCA.crt /root/helix-on-prem-deployment-manager-25.1/commons/../commons/certs/custom_cacert.pem
 ```
 ### 1.4 NFS and StorageClass
 
@@ -182,7 +182,7 @@ dnf install haproxy -y
 
 * Copy config file
 ```
-\cp ~/helix-metal-install/haproxy.cfg /etc/haproxy/haproxy.cfg
+\cp ~/BMC-Helix-OnPrem-Installation-1-Env/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg
 ```
 
 * Enable and start HAProxy
