@@ -203,7 +203,7 @@ firewall-cmd --add-port=9000/tcp --zone=external --permanent # HAProxy Stats
 firewall-cmd --reload
 ```
 
-* Verify HAProxy, browser access https://192.168.1.1:9000/stats
+* Verify HAProxy, browser access http://192.168.1.1:9000/stats
 ![Helix Status 1](./diagram/haproxy-status-1.png)
 
 You can see that the queue status is not UP because it has not been configured yet, which is normal.
