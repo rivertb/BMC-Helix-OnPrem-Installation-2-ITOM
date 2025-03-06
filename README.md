@@ -457,7 +457,18 @@ systemctl restart haproxy
 
 ## 2 Deploy Helix Dashboard
 
-### 2.1 Run Helix Deployment Manager
+### 2.1 Set Docker file limit
+* In case of redis-redis-ha-haproxy pods shows "OOMKilled" error, login to each worker node, and set the file limit as mentioned below:
+
+```
+sed -i 's/LimitNOFILE=infinity/LimitNOFILE=65535/' /usr/lib/systemd/system/containerd.service
+
+#Reload and restart contained service:
+systemctl daemon-reload
+systemctl restart containerd
+```
+
+### 2.2 Run Helix Deployment Manager
 * Execute the Helix deployment manager on the helix-svc server
 
 ```
@@ -468,7 +479,7 @@ cd /root//helix-on-prem-deployment-manager-25.1
 * Wait for the installer to complete:
 ![Completed Helix Installation](./diagram/completed-helix-on-prem-installation.png)
 
-### 2.2 Import the CA certificate into the Windows server where the browser is located
+### 2.3 Import the CA certificate into the Windows server where the browser is located
 
 * Check Helix Portal account activation email
 ![Activate Portal Account](./diagram/activate-portal-account-eamil.png)
