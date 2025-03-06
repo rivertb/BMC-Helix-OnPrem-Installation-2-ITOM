@@ -255,9 +255,6 @@ backend mailhog
 systemctl restart haproxy
 ```
 
-* Check the HAProxy console to verify that mailhog is running
-![Helix Status 2](./diagram/haproxy-status-2.png)
-
 * Open firewall for MailHog
 ```
 firewall-cmd --zone=internal --permanent --add-service=smtp
@@ -268,6 +265,9 @@ firewall-cmd --zone=internal --permanent --add-service=smtps
 firewall-cmd --zone=external --permanent --add-service=smtps
 firewall-cmd --reload
 ```
+
+* Check the HAProxy console to verify that mailhog is running
+![Helix Status 2](./diagram/haproxy-status-2.png)
 
 * Send test mail
 ```
