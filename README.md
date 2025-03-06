@@ -234,11 +234,14 @@ smtp_port=$(kubectl --namespace email get svc mailhog -o=jsonpath="{.spec.ports[
 
 echo "MailHog Web UI at http://$node_ip:$web_port"
 echo "MailHog SMTP port at $node_ip:$smtp_port"
+```
 
-
+* The output example:
+```
 #MailHog Web UI at http://192.168.1.200:31532
 #MailHog SMTP port at 192.168.1.200:32354
 ```
+
 The above output shows that the mail console is http://192.168.1.200:31532 and the sending interface is 192.168.1.200:32354
 
 * Modify the HAProxy configuration file and adjust the mailhog port to the SMTP port output value
@@ -321,7 +324,10 @@ kubectl apply -f deploy.yaml
 * Wait for Ingress Nginx to be created
 ```
 kubectl -n ingress-nginx get all
+```
 
+* The output example:
+```
 NAME                                       READY   STATUS      RESTARTS   AGE
 pod/ingress-nginx-admission-create-4fdv9   0/1     Completed   0          111s
 pod/ingress-nginx-admission-patch-tdxjj    0/1     Completed   0          111s
@@ -392,7 +398,7 @@ kubectl -n ingress-nginx get pod
 ```
 kubectl -n ingress-nginx describe <pod name> | grep -i image
 ```
-The verification results are as follows:
+The verification result example is as follows:
 ```
 [root@helix-svc openssl]# kubectl -n ingress-nginx get pod
 NAME                                   READY   STATUS      RESTARTS   AGE
@@ -422,7 +428,10 @@ kubectl patch service/ingress-nginx-controller -n ingress-nginx -p '{"spec":{"ex
 * Verify that ingress-nginx-controller has been successfully changed
 ```
 kubectl -n ingress-nginx get service
+```
 
+* The output example
+```
 NAME                                 TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
 ingress-nginx-controller             LoadBalancer   10.43.144.239   192.168.1.1   80:30468/TCP,443:31019/TCP   55m
 ingress-nginx-controller-admission   ClusterIP      10.43.137.171   <none>        443/TCP                      55m
