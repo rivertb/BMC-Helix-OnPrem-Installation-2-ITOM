@@ -258,9 +258,14 @@ systemctl restart haproxy
 * Check the HAProxy console to verify that mailhog is running
 ![Helix Status 2](./diagram/haproxy-status-2.png)
 
-* Open firewall ports for MailHog
+* Open firewall for MailHog
 ```
-firewall-cmd --add-port=25/tcp --zone=internal --permanent
+firewall-cmd --zone=internal --permanent --add-service=smtp
+firewall-cmd --zone=external --permanent --add-service=smtp
+firewall-cmd --zone=internal --permanent --add-service=smtp-submission
+firewall-cmd --zone=external --permanent --add-service=smtp-submission
+firewall-cmd --zone=internal --permanent --add-service=smtps
+firewall-cmd --zone=external --permanent --add-service=smtps
 firewall-cmd --reload
 ```
 
