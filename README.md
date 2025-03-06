@@ -127,14 +127,14 @@ dnf install nfs-utils -y
 
 * Create NFS Storage Directory
 ```
-mkdir -p /opt/datastore/helixade
-chown -R nobody:nobody /opt/datastore/helixade
-chmod -R 777 /opt/datastore/helixade
+mkdir -p /var/nfs/helixade
+chown -R nobody:nobody /var/nfs/helixade
+chmod -R 777 /var/nfs/helixade
 ```
 
 * Export NFS directory
 ```
-echo "/opt/datastore/helixade  192.168.1.0/24(rw,sync,root_squash,no_subtree_check,no_wdelay)" > /etc/exports
+echo "/var/nfs  192.168.1.0/24(rw,sync,root_squash,no_subtree_check,no_wdelay)" > /etc/exports
 exportfs -rv
 ```
 
@@ -143,6 +143,9 @@ exportfs -rv
 firewall-cmd --zone=internal --add-service mountd --permanent
 firewall-cmd --zone=internal --add-service rpc-bind --permanent
 firewall-cmd --zone=internal --add-service nfs --permanent
+firewall-cmd --zone=external --add-service mountd --permanent
+firewall-cmd --zone=external --add-service rpc-bind --permanent
+firewall-cmd --zone=external --add-service nfs --permanent
 firewall-cmd --reload
 ```
 
@@ -159,13 +162,13 @@ showmount -e
 
 #### 1.4.2 Create StorageClass on NFS
 
-* For the creation of NFS Storage Class, please refer to the document[nfs-subdir-external-provisioner](https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner)
+* For the creation of NFS Storage Class, please refer to the document [nfs-subdir-external-provisioner](https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner)
 
 ```
 #Create namespace for storageclass
 kubectl create namespace infra
 helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
-helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set nfs.server=192.168.1.1 --set nfs.path=/opt/datastore/helixade --set storageClass.name=nfs-storage -n infra
+helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set nfs.server=192.168.1.1 --set nfs.path=/var/nfs/helixade --set storageClass.name=nfs-storage -n infra
 ```
 
 * Verify the storageclass
@@ -529,7 +532,7 @@ Select option C to submit, y to confirm the changes, then select option Q to ret
 ![Helix Discovery set network](./diagram/helix-discovery-set-network.png)
 
 ### 3.2 Config Helix Discovery console
-Use a browser to login to the Helix Discovery console at https://192.168.1.210, use the built-in login username system, and the default password system
+Use a browser to login to the Helix Discovery console at https://192.168.1.210/ui/LocalLogin, use the built-in login username system, and the default password system
 ![Helix Discovery login](./diagram/helix-discovery-login.png)
 
 * When logging in for the first time, you need to change the system user password, for example, to bmcAdm1n#
