@@ -1,4 +1,4 @@
-# BMC HelixOM ITOM & ITSM OnPrem Installation Step by Step 2 - ITOM
+# BMC Helix ITOM & ITSM OnPrem Installation Step by Step 2 - ITOM
 
 - [BMC HelixOM ITOM & ITSM OnPrem Installation Step by Step 2 - ITOM](#bmc-helixom-itom-&-itsm-onprem-installation-step-by-step-2---itom)
   - [1 Pre-installation preparation](#1-pre-installation-preparation)
