@@ -591,6 +591,32 @@ Name Servers: 192.168.1.1
 Administration->Single Sign On view，Upload CA Bundle
 ![Helix Discovery upload Trustred CA](./diagram/helix-discovery-upload-trusted-ca.png)
 
+* Replace Helix Https certificate
+### Backup the original files (keys, server certificates and ca certificate bundles)
+```
+su - tideway
+cp /usr/tideway/etc/https/server.crt /usr/tideway/etc/https/server.crt_bak
+cp /usr/tideway/etc/https/server.key /usr/tideway/etc/https/server.key_bak
+cp /usr/tideway/etc/https/ca-bundle.crt /usr/tideway/etc/https/ca-bundle.crt_bak
+su root
+cp /etc/httpd/conf/ssl.crt/server.crt /etc/httpd/conf/ssl.crt/server.crt_bak
+cp /etc/httpd/conf/ssl.key/server.key /etc/httpd/conf/ssl.key/server.key_bak
+cp /etc/httpd/conf/ssl.crt/ca-bundle.crt /etc/httpd/conf/ssl.crt/ca-bundle.crt_bak
+
+### Upload Self-sign certificate and public/private key
+# /usr/tideway/etc/https/server.crt
+# /usr/tideway/etc/https/server.key
+# /usr/tideway/etc/https/ca-bundle.crt
+
+### Change web server key
+su root
+cp /usr/tideway/etc/https/server.crt /etc/httpd/conf/ssl.crt/server.crt
+cp /usr/tideway/etc/https/server.key /etc/httpd/conf/ssl.key/server.key
+cp /usr/tideway/etc/https/ca-bundle.crt /etc/httpd/conf/ssl.crt/ca-bundle.crt
+chown root:tideway /etc/httpd/conf/ssl.key/server.key
+chmod 640  /etc/httpd/conf/ssl.key/server.key 
+Reboot
+```
 
 ## 4 Install other ITOM components
 Helix ITOM components include the following list. Select the component to install, change the corresponding parameter value to yes in the deployment.config file, and re-execute /deployment-manager.sh
