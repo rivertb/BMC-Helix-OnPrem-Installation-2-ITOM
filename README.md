@@ -592,8 +592,8 @@ Administration->Single Sign On view，Upload CA Bundle
 ![Helix Discovery upload Trustred CA](./diagram/helix-discovery-upload-trusted-ca.png)
 
 * Replace Helix Https certificate
-### Backup the original files (keys, server certificates and ca certificate bundles)
 ```
+### Backup the original files (keys, server certificates and ca certificate bundles)
 su - tideway
 cp /usr/tideway/etc/https/server.crt /usr/tideway/etc/https/server.crt_bak
 cp /usr/tideway/etc/https/server.key /usr/tideway/etc/https/server.key_bak
