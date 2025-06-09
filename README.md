@@ -14,26 +14,26 @@ The installation environment of this project depends on [BMC-Helix-OnPrem-Instal
 ### 1.1 Download Helix Deployment Manager
 Unlike Helix ITSM, the installation of Helix ITOM components is relatively simple. All installation is done independently by Helix Deployment Manager. Before installation, we need to download Helix Deployment Manager.
 
-* Login to [EPD](https://webepd.bmc.com/edownloads/ddl/cv/LP/442432/537020?fltk_=VTH1iwPCxfU%3D)，Download the latest version of helix-on-prem-deployment-manager-<release_version>.sh file，eg. helix-on-prem-deployment-manager-25.1.00-45.sh
+* Login to [EPD](https://webepd.bmc.com/edownloads/ddl/cv/LP/442432/537020?fltk_=VTH1iwPCxfU%3D)，Download the latest version of helix-on-prem-deployment-manager-<release_version>.sh file，eg. helix-on-prem-deployment-manager-25.2.00-70.sh
 
 ![EPD Helix Deployment Manager](./diagram/epd-helix-deployment-manager.png)
 
-* Upload helix-on-prem-deployment-manager-25.1.00-45.sh to the helix-svc server
+* Upload helix-on-prem-deployment-manager-25.2.00-70.sh to the helix-svc server
 
 * Add executable permissions to shell files
 
 ```
-chmod a+x helix-on-prem-deployment-manager-25.1.00-45.sh
+chmod a+x helix-on-prem-deployment-manager-25.2.00-70.sh
 ```
 
 * Execute the self-extracting file and create the directory helix-on-prem-deployment-manager
 ```
-./helix-on-prem-deployment-manager-25.1.00-45.sh
+./helix-on-prem-deployment-manager-25.2.00-70.sh
 ```
 
 * Modify the directory name to facilitate the distinction between versions
 ```
-mv helix-on-prem-deployment-manager helix-on-prem-deployment-manager-25.1
+mv helix-on-prem-deployment-manager helix-on-prem-deployment-manager-25.2
 ```
 
 ### 1.2 Set the config files
@@ -107,7 +107,7 @@ Edit the ./config/deployment.config configuration file and modify the following 
 | 2 | IMAGE_REGISTRY_PASSWORD | bmcAdm1n | Harbor console admin password |
 | 3 | SMTP_PASSWORD | dummy | MailHog mailbox does not require a password |
 | 4 | SMART_SYSTEM_PASSWORD | bmcAdm1n | All passwords are set to bmcAdm1n for easy memorization |
-| 9 | ES_JKS_PASSWORD | bmcAdm1n | |
+| 10 | ES_JKS_PASSWORD | bmcAdm1n | |
 
 * The secrets.txt file will be deleted when you run the Helix installer for the first time. It is recommended to make a backup.
 ```
@@ -115,7 +115,7 @@ cp secrets.txt secrets.txt.bak
 ```
 #### 1.2.4 custom_cacert.pem
 ```
-cp /root/openssl/HelixCA.crt /root/helix-on-prem-deployment-manager-25.1/commons/../commons/certs/custom_cacert.pem
+cp /root/openssl/HelixCA.crt /root/helix-on-prem-deployment-manager-25.2/commons/../commons/certs/custom_cacert.pem
 ```
 ### 1.4 NFS and StorageClass
 
@@ -302,11 +302,11 @@ kubectl delete ValidatingWebhookConfiguration ingress-nginx-admission
 kubectl delete ns ingress-nginx
 ```
 
-* Download the corresponding kubernetes version [NGINX Ingress Controller](https://docs.bmc.com/xwiki/bin/view/IT-Operations-Management/On-Premises-Deployment/BMC-Helix-IT-Operations-Management-Deployment/itomdeploy251/Planning/System-requirements/) 
+* Download the corresponding kubernetes version [NGINX Ingress Controller](https://docs.bmc.com/xwiki/bin/view/IT-Operations-Management/On-Premises-Deployment/BMC-Helix-IT-Operations-Management-Deployment/itomdeploy252/Planning/System-requirements/) 
 
 ```
 dnf install wget -y
-wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.4/deploy/static/provider/cloud/deploy.yaml
+wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.1/deploy/static/provider/cloud/deploy.yaml
 ```
 
 * Edit and modify the downloaded deploy.yaml file
@@ -371,13 +371,16 @@ kubectl edit cm ingress-nginx-controller -n ingress-nginx
 * Add the following content under data:
 
 ```
+data:
   enable-underscores-in-headers: "true"
+  annotations-risk-level: "Critical"
   proxy-body-size: 250m
   server-name-hash-bucket-size: "1024"
   ssl-redirect: "false"
   use-forwarded-headers: "true"
   worker-processes: "40"
   allow-snippet-annotations: "true"
+  large-client-header-buffers: "4 64k"
 ```
 
 * After modification, the figure is as follows:
@@ -472,7 +475,7 @@ systemctl restart containerd
 * Execute the Helix deployment manager on the helix-svc server
 
 ```
-cd /root//helix-on-prem-deployment-manager-25.1
+cd /root//helix-on-prem-deployment-manager-25.2
 ./deployment-manager.sh
 ```
 
@@ -508,7 +511,7 @@ cd /root//helix-on-prem-deployment-manager-25.1
 ![Helix Portal](./diagram/helix-portal.png)
 
 ## 3 Deploy Helix Discovery
-BMC Helix Discovery is a basic component of Helix ITOM. You must successfully install and configure Helix Discovery before installing other Helix ITOM components. Helix Discovery is delivered as a virtual machine OVF file and runs as a VM.
+BMC Helix Discovery is a basic component of Helix ITOM. You must successfully install and configure Helix Discovery before installing other Helix ITOM components. Helix Discovery is delivered as a virtual machine OVF file and runs as a VM. For Helix OM 25.2 version, the required version is 24.3 and later.
 
 ### 3.1 Helix Discovery virtual machine import and configuration
 
