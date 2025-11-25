@@ -14,26 +14,26 @@ The installation environment of this project depends on [BMC-Helix-OnPrem-Instal
 ### 1.1 Download Helix Deployment Manager
 Unlike Helix ITSM, the installation of Helix ITOM components is relatively simple. All installation is done independently by Helix Deployment Manager. Before installation, we need to download Helix Deployment Manager.
 
-* Login to [EPD](https://webepd.bmc.com/edownloads/ddl/cv/LP/442432/537020?fltk_=VTH1iwPCxfU%3D)，Download the latest version of helix-on-prem-deployment-manager-<release_version>.sh file，eg. helix-on-prem-deployment-manager-25.3.00-60
+* Login to [EPD](https://webepd.bmc.com/edownloads/ddl/cv/LP/442432/537020?fltk_=VTH1iwPCxfU%3D)，Download the latest version of helix-on-prem-deployment-manager-<release_version>.sh file，eg. helix-on-prem-deployment-manager-25.4.00-98
 
 ![EPD Helix Deployment Manager](./diagram/epd-helix-deployment-manager.png)
 
-* Upload helix-on-prem-deployment-manager-25.3.00-60 to the helix-svc server
+* Upload helix-on-prem-deployment-manager-25.4.00-98 to the helix-svc server
 
 * Add executable permissions to shell files
 
 ```
-chmod a+x helix-on-prem-deployment-manager-25.3.00-60
+chmod a+x helix-on-prem-deployment-manager-25.4.00-98
 ```
 
 * Execute the self-extracting file and create the directory helix-on-prem-deployment-manager
 ```
-./helix-on-prem-deployment-manager-25.3.00-60
+./helix-on-prem-deployment-manager-25.4.00-98
 ```
 
 * Modify the directory name to facilitate the distinction between versions
 ```
-mv helix-on-prem-deployment-manager helix-on-prem-deployment-manager-25.3
+mv helix-on-prem-deployment-manager helix-on-prem-deployment-manager-25.4
 ```
 
 ### 1.2 Set the config files
@@ -115,7 +115,7 @@ cp secrets.txt secrets.txt.bak
 ```
 #### 1.2.4 custom_cacert.pem
 ```
-cp /root/openssl/HelixCA.crt /root/helix-on-prem-deployment-manager-25.3/commons/../commons/certs/custom_cacert.pem
+cp /root/openssl/HelixCA.crt /root/helix-on-prem-deployment-manager-25.4/commons/../commons/certs/custom_cacert.pem
 ```
 ### 1.4 NFS and StorageClass
 
@@ -475,7 +475,7 @@ systemctl restart containerd
 * Execute the Helix deployment manager on the helix-svc server
 
 ```
-cd /root//helix-on-prem-deployment-manager-25.3
+cd /root//helix-on-prem-deployment-manager-25.4
 ./deployment-manager.sh
 ```
 
@@ -511,7 +511,7 @@ cd /root//helix-on-prem-deployment-manager-25.3
 ![Helix Portal](./diagram/helix-portal.png)
 
 ## 3 Deploy Helix Discovery
-BMC Helix Discovery is a basic component of Helix ITOM. You must successfully install and configure Helix Discovery before installing other Helix ITOM components. Helix Discovery is delivered as a virtual machine OVF file and runs as a VM. For Helix OM 25.3 version, the required version is 25.2 and later.
+BMC Helix Discovery is a basic component of Helix ITOM. You must successfully install and configure Helix Discovery before installing other Helix ITOM components. Helix Discovery is delivered as a virtual machine OVF file and runs as a VM. For Helix OM 25.4 version, the required version is 25.2 and later.
 
 ### 3.1 Helix Discovery virtual machine import and configuration
 
