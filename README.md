@@ -482,13 +482,13 @@ cd /root//helix-on-prem-deployment-manager-25.4
 * Wait for the installer to complete:
 ![Completed Helix Installation](./diagram/completed-helix-on-prem-installation.png)
 
-### 2.3 Import the CA certificate into the Windows server where the browser is located
+### 2.3 Activate your account and configure your password
 
 Sign in to activate your account and configure your password. Use RSSO_FIRSTUSER_PASSWORD for activation
 
-URL: https://adelab-private-poc.bmc.local
-User name: hannah_admin
-Password: RSSO_FIRSTUSER_PASSWORD in $Helix-HOME/commons/certs/secrets.txt
+* URL: https://adelab-private-poc.bmc.local
+* User name: hannah_admin
+* Password: RSSO_FIRSTUSER_PASSWORD in $Helix-HOME/commons/certs/secrets.txt
 
 * The browser will pop up the Helix Portal login page, and the error "net::ERR_CERT_AUTHORITY_INVALID" will be reported. This is normal. Because the Https signing CA used by Helix is customized, the CA certificate needs to be imported into the trust store.
 ![NET::ERR-CERT-AUTHORITY-INVALID](./diagram/net-err-cert-authority-invalid.png)
