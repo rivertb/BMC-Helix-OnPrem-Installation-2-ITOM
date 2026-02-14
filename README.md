@@ -421,11 +421,9 @@ error: the server doesn't have a resource type "ingress-nginx-controller-2q2vg"
 * Delete the Validating Webhook Configuration, otherwise it may prevent the release of the ingress object
 ```
 kubectl get validatingwebhookconfigurations | grep -i nginx
-```
-kubectl get validatingwebhookconfigurations | grep -i nginx
 rke2-ingress-nginx-admission   1          7d5h
 ingress-nginx-admission        1          7d5h
-
+```
 ```
 kubectl delete job ingress-nginx-admission-create ingress-nginx-admission-patch -n ingress-nginx --ignore-not-found=true
 kubectl -n ingress-nginx delete -A ValidatingWebhookConfiguration ingress-nginx-admission
