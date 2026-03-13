@@ -362,6 +362,7 @@ Add:
 "- --default-ssl-certificate=ingress-nginx/my-tls-secret"
 
 The modified configuration is as follows:
+
 ![my-tls-secret-setting](./diagram/my-tls-secret-setting.png)
 
 * Modify ingress-nginx-controller
@@ -551,6 +552,7 @@ timedatectl
 ```
 
 * Switch to netadmin user and enter the network management shell
+
 ![Helix Discovery switch to netadmin](./diagram/helix-discovery-switch-to-netadmin.png)
 
 * Select option G first, then option H, configure the host name to helix-discovery, option C to submit, and option Q to return to the main menu
