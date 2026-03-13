@@ -1,3 +1,4 @@
+
 # BMC Helix ITOM & ITSM OnPrem Installation Step by Step 2 - ITOM
 
 - [BMC HelixOM ITOM & ITSM OnPrem Installation Step by Step 2 - ITOM](#bmc-helixom-itom-&-itsm-onprem-installation-step-by-step-2---itom)
@@ -14,26 +15,26 @@ The installation environment of this project depends on [BMC-Helix-OnPrem-Instal
 ### 1.1 Download Helix Deployment Manager
 Unlike Helix ITSM, the installation of Helix ITOM components is relatively simple. All installation is done independently by Helix Deployment Manager. Before installation, we need to download Helix Deployment Manager.
 
-* Login to [EPD](https://webepd.bmc.com/edownloads/ddl/cv/LP/442432/537020?fltk_=VTH1iwPCxfU%3D)，Download the latest version of helix-on-prem-deployment-manager-<release_version>.sh file，eg. helix-on-prem-deployment-manager-25.4.00-98
+* Login to [EPD](https://webepd.bmc.com/edownloads/ddl/cv/LP/442432/537020?fltk_=VTH1iwPCxfU%3D)，Download the latest version of helix-on-prem-deployment-manager-<release_version>.sh file，eg. helix-on-prem-deployment-manager-26.1.00-63.sh
 
 ![EPD Helix Deployment Manager](./diagram/epd-helix-deployment-manager.png)
 
-* Upload helix-on-prem-deployment-manager-25.4.00-98 to the helix-svc server
+* Upload helix-on-prem-deployment-manager-26.1.00-63.sh to the helix-svc server
 
 * Add executable permissions to shell files
 
 ```
-chmod a+x helix-on-prem-deployment-manager-25.4.00-98
+chmod a+x helix-on-prem-deployment-manager-26.1.00-63.sh
 ```
 
 * Execute the self-extracting file and create the directory helix-on-prem-deployment-manager
 ```
-./helix-on-prem-deployment-manager-25.4.00-98
+./helix-on-prem-deployment-manager-26.1.00-63.sh
 ```
 
 * Modify the directory name to facilitate the distinction between versions
 ```
-mv helix-on-prem-deployment-manager helix-on-prem-deployment-manager-25.4
+mv helix-on-prem-deployment-manager helix-on-prem-deployment-manager-26.1.00-63
 ```
 
 ### 1.2 Set the config files
@@ -115,7 +116,7 @@ cp secrets.txt secrets.txt.bak
 ```
 #### 1.2.4 custom_cacert.pem
 ```
-cp /root/openssl/HelixCA.crt /root/helix-on-prem-deployment-manager-25.4/commons/../commons/certs/custom_cacert.pem
+cp /root/openssl/HelixCA.crt /root/helix-on-prem-deployment-manager-26.1.00-63/commons/../commons/certs/custom_cacert.pem
 ```
 ### 1.4 NFS and StorageClass
 
@@ -302,11 +303,11 @@ kubectl delete ValidatingWebhookConfiguration ingress-nginx-admission
 kubectl delete ns ingress-nginx
 ```
 
-* Download the corresponding kubernetes version [NGINX Ingress Controller](https://docs.bmc.com/xwiki/bin/view/IT-Operations-Management/On-Premises-Deployment/BMC-Helix-IT-Operations-Management-Deployment/itomdeploy252/Planning/System-requirements/) 
+* Download the corresponding kubernetes version [NGINX Ingress Controller](https://docs.bmc.com/xwiki/bin/view/IT-Operations-Management/On-Premises-Deployment/BMC-Helix-IT-Operations-Management-Deployment/itomdeploy261/Deploying/Preparing-for-deployment/Deploying-and-configuring-the-NGINX-Open-Source-Ingress-Controller/) 
 
 ```
 dnf install wget -y
-wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.1/deploy/static/provider/cloud/deploy.yaml
+wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.3/deploy/static/provider/cloud/deploy.yaml
 ```
 
 * Edit and modify the downloaded deploy.yaml file
@@ -481,7 +482,7 @@ systemctl restart containerd
 * Execute the Helix deployment manager on the helix-svc server
 
 ```
-cd /root//helix-on-prem-deployment-manager-25.4
+cd /root//helix-on-prem-deployment-manager-26.1.63
 ./deployment-manager.sh
 ```
 
@@ -520,7 +521,7 @@ Sign in to activate your account and configure your password. Use RSSO_FIRSTUSER
 ![Helix Portal](./diagram/helix-portal.png)
 
 ## 3 Deploy Helix Discovery
-BMC Helix Discovery is a basic component of Helix ITOM. You must successfully install and configure Helix Discovery before installing other Helix ITOM components. Helix Discovery is delivered as a virtual machine OVF file and runs as a VM. For Helix OM 25.4 version, the required version is 25.2 and later.
+BMC Helix Discovery is a basic component of Helix ITOM. You must successfully install and configure Helix Discovery before installing other Helix ITOM components. Helix Discovery is delivered as a virtual machine OVF file and runs as a VM. For Helix OM 26.1 version, the required version is 25.2 and later.
 
 ### 3.1 Helix Discovery virtual machine import and configuration
 
@@ -635,14 +636,15 @@ Helix ITOM components include the following list. Select the component to instal
 
 | Line no. | Parameter | Helix ITOM Component |
 | --- | --- | --- |
-| 46 | AIOPS_SERVICES | Helix Service Monitoring |
-| 51 | AIOPS_GPT | HelixGPT |
-| 54 | MONITOR | Helix Operations Management |
-| 57 | LOG_ANALYTICS_SERVICES | Helix Log Analytics |
-| 60 | INTELLIGENT_AUTOMATION | Helix Intelligent Automation |
-| 63 | OPTIMIZE | Helix Continuous Optimization |
-| 71 | AUTOANAMOLY | Helix Operations Management & Helix Service Monitoring |
-| 74 | AUTOMATION_CONSOLE | Helix Automation Console |
+| 41 | AIOPS_SERVICES | Helix Service Monitoring |
+| 44 | MONITOR | Helix Operations Management |
+| 47 | LOG_ANALYTICS_SERVICES | Helix Log Analytics |
+| 50 | INTELLIGENT_AUTOMATION | Helix Intelligent Automation |
+| 53 | OPTIMIZE | Helix Continuous Optimization |
+| 56 | AUTOMATION_CONSOLE| Automation Console|
+| 72 | AIOPS_GPT | Helix AIOps GPT |
+| 71 | AUTOANAMOLY | Helix Operations Management & Helix Service Monitoring Autoanamoly |
+| 74 | SM_PLATFORM_FULL | Service Management Platform Full SKU |
 ## 5 Import PATROL KM to Helix Monitor repository
 ```
 cp -R ~/BMC-Helix-OnPrem-Installation-1-Env/BHOM-KMImport /root
