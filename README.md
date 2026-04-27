@@ -287,10 +287,10 @@ swaks -f host-test@me -t local@me -s 192.168.1.1 -p 25 --body "this is a test" -
 ### 1.7 Ingress
 Helix supports two types of Kubernetes reverse proxy and load balancing starting from 24.3
 
-* NGINX Open Source Ingress Controller
+* Chainguard-maintained NGINX Open Source Ingress Controller
 * F5 NGINX Plus Ingress Controller
 
-This document uses the first method. For detailed introduction and installation steps, please refer to the document[IngressController](https://docs.bmc.com/xwiki/bin/view/IT-Operations-Management/On-Premises-Deployment/BMC-Helix-IT-Operations-Management-Deployment/itomdeploy251/Deploying/Preparing-for-deployment/Deploying-and-configuring-the-NGINX-Open-Source-Ingress-Controller/)
+This document uses the first method. For detailed introduction and installation steps, please refer to the document[IngressController](https://docs.bmc.com/xwiki/bin/view/IT-Operations-Management/On-Premises-Deployment/BMC-Helix-IT-Operations-Management-Deployment/itomdeploy261/Deploying/Preparing-for-deployment/Deploying-and-configuring-the-NGINX-Open-Source-Ingress-Controller/)
 
 * Delete the old ingress-nginx namespace
 
@@ -307,7 +307,7 @@ kubectl delete ns ingress-nginx
 
 ```
 dnf install wget -y
-wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.3/deploy/static/provider/cloud/deploy.yaml
+wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.4/deploy/static/provider/cloud/deploy.yaml
 ```
 
 * Edit and modify the downloaded deploy.yaml file
