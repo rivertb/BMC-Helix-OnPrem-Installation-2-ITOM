@@ -307,7 +307,7 @@ kubectl delete ns ingress-nginx
 
 ```
 dnf install wget -y
-wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.4/deploy/static/provider/cloud/deploy.yaml
+wget https://docs.bmc.com/xwiki/bin/download/IT-Operations-Management/On-Premises-Deployment/BMC-Helix-IT-Operations-Management-Deployment/itomdeploy261/Deploying/Preparing-for-deployment/Deploying-and-configuring-the-NGINX-Open-Source-Ingress-Controller/WebHome/deploy_1.14.4.yaml?rev=1.2
 ```
 
 * Edit and modify the downloaded deploy.yaml file
