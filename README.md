@@ -1,4 +1,5 @@
 
+
 # BMC Helix ITOM & ITSM OnPrem Installation Step by Step 2 - ITOM
 
 - [BMC HelixOM ITOM & ITSM OnPrem Installation Step by Step 2 - ITOM](#bmc-helixom-itom-&-itsm-onprem-installation-step-by-step-2---itom)
@@ -284,7 +285,7 @@ swaks -f host-test@me -t local@me -s 192.168.1.1 -p 25 --body "this is a test" -
 * Log in to the email console https://192.168.1.200:31532 through the browser, and you can see two emails, one sent to the original port and the other to port 25 of the HAProxy proxy
 ![MailHog Test eMails](./diagram/mailhog-test-emails.png)
 
-### 1.7 Ingress
+### 1.7 ## Chainguard-maintained Ingress
 Helix supports two types of Kubernetes reverse proxy and load balancing starting from 24.3
 
 * Chainguard-maintained NGINX Open Source Ingress Controller
@@ -315,7 +316,21 @@ wget https://docs.bmc.com/xwiki/bin/download/IT-Operations-Management/On-Premise
     Change the kind field of the ingress-nginx-controller from **Deployment** to **DaemonSet**
     Under kind: **Daemonset**, change the spec.**strategy** field to spec.**updateStrategy**
     Under kind: **Daemonset**, locate **securityContext**, and then set the value of the flag **allowPrivilegeEscalation** as **true**
+    Change the image to local harbor registry
+    From image: docker.io/bmchelix/lp0lz:ingress-nginx-controller-v1.14.4-nginx.1.27
+    To image: helix-harbor/bmchelix/lp0lz:ingress-nginx-controller-v1.14.4-nginx.1.27
 
+    From image: docker.io/bmchelix/lp0lz:kube-webhook-certgen-v1.15.0
+    To image: helix-harbor.bmc.local/bmchelix/lp0lz:kube-webhook-certgen-v1.15.0
+
+*  Create a Docker registry secret in the ingress-nginx namespace to allow the cluster to authenticate and pull the Chainguard-maintained image by using the following commands:
+```
+kubectl create secret docker-registry bmc-dtrhub \  
+-n ingress-nginx \  
+--docker-server=helix-harbor.bmc.local \  
+--docker-username=admin \  
+--docker-password='bmcAdm1n'
+```
 *  Deploy deploy.yaml
 ```
 kubectl create ns ingress-nginx
@@ -359,7 +374,9 @@ kubectl create secret tls my-tls-secret --cert=/root/openssl/bmc.local.crt --key
 kubectl edit daemonset ingress-nginx-controller -n ingress-nginx
 ```
 Add:
+```
 "- --default-ssl-certificate=ingress-nginx/my-tls-secret"
+```
 
 The modified configuration is as follows:
 
