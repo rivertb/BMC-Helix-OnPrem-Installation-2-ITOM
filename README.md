@@ -285,7 +285,7 @@ swaks -f host-test@me -t local@me -s 192.168.1.1 -p 25 --body "this is a test" -
 * Log in to the email console https://192.168.1.200:31532 through the browser, and you can see two emails, one sent to the original port and the other to port 25 of the HAProxy proxy
 ![MailHog Test eMails](./diagram/mailhog-test-emails.png)
 
-### 1.7 ## Chainguard-maintained Ingress
+### 1.7 Chainguard-maintained Ingress
 Helix supports two types of Kubernetes reverse proxy and load balancing starting from 24.3
 
 * Chainguard-maintained NGINX Open Source Ingress Controller
